@@ -22,18 +22,18 @@ class WickedPdf
           if Regexp.last_match[1].starts_with?('data:')
             "url(#{Regexp.last_match[1]})"
           else
-            "url(#{wicked_pdf_asset_path(Regexp.last_match[1])})"
+            "url(#{wicked_pdf_asset_pack_path(Regexp.last_match[1])})"
           end
         end.html_safe
       end
 
       def wicked_pdf_image_tag(img, options = {})
-        image_tag wicked_pdf_asset_path(img), options
+        image_tag wicked_pdf_asset_pack_path(img), options
       end
 
       def wicked_pdf_javascript_src_tag(jsfile, options = {})
         jsfile = WickedPdfHelper.add_extension(jsfile, 'js')
-        javascript_include_tag wicked_pdf_asset_path(jsfile), options
+        javascript_include_tag wicked_pdf_asset_pack_path(jsfile), options
       end
 
       def wicked_pdf_javascript_include_tag(*sources)
@@ -43,7 +43,7 @@ class WickedPdf
         end.join("\n").html_safe
       end
 
-      def wicked_pdf_asset_path(asset)
+      def wicked_pdf_asset_pack_path(asset)
         if (pathname = asset_pathname(asset).to_s) =~ URI_REGEXP
           pathname
         else
@@ -58,7 +58,7 @@ class WickedPdf
 
       def asset_pathname(source)
         if precompiled_or_absolute_asset?(source)
-          asset = asset_path(source)
+          asset = asset_pack_path(source)
           pathname = prepend_protocol(asset)
           if pathname =~ URI_REGEXP
             # asset_path returns an absolute URL using asset_host if asset_host is set
