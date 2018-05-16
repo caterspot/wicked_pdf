@@ -26,8 +26,8 @@ to `config/initializers/mime_types.rb` in older versions of Rails.
 
 Because `wicked_pdf` is a wrapper for  [wkhtmltopdf](http://wkhtmltopdf.org/), you'll need to install that, too.
 
-The simplest way to install all of the binaries (Linux, OSX, Windows) is through the gem [wkhtmltopdf-binary](https://github.com/zakird/wkhtmltopdf_binary_gem).
-To install that, add a second gem
+The simplest way to install all of the binaries on most Linux or OSX systems is through the gem [wkhtmltopdf-binary](https://github.com/zakird/wkhtmltopdf_binary_gem). Builds for other systems are available [here](https://wkhtmltopdf.org/downloads.html)
+To install that gem, add this:
 
 ```ruby
 gem 'wkhtmltopdf-binary'
@@ -35,7 +35,9 @@ gem 'wkhtmltopdf-binary'
 
 To your Gemfile and run `bundle install`.
 
-This wrapper may trail in versions, at the moment it wraps the 0.9 version of `wkhtmltopdf` while there is 0.12 version available. Some of the advanced options listed below are not available with 0.9.
+This gem currently installs version 0.12.x of `wkhtmltopdf`. Some of the options listed below are specific 0.9 or below, and others are for 0.12 and up.
+
+You can see what flags are supported for the current version in [wkhtmltopdf's auto-generated manual](https://wkhtmltopdf.org/usage/wkhtmltopdf.txt)
 
 If your wkhtmltopdf executable is not on your webserver's path, you can configure it in an initializer:
 
@@ -108,7 +110,7 @@ Using wicked_pdf_helpers with asset pipeline raises `Asset names passed to helpe
 
 #### Asset pipeline usage
 
-It is best to precompile assets used in PDF views. This will help avoid issues when it comes to deploying, as Rails serves asset files differently between development and production (`config.assets.comple = false`), which can make it look like your PDFs work in development, but fail to load assets in production.
+It is best to precompile assets used in PDF views. This will help avoid issues when it comes to deploying, as Rails serves asset files differently between development and production (`config.assets.compile = false`), which can make it look like your PDFs work in development, but fail to load assets in production.
 
     config.assets.precompile += ['blueprint/screen.css', 'pdf.css', 'jquery.ui.datepicker.js', 'pdf.js', ...etc...]
 
@@ -389,6 +391,8 @@ However, the wicked_pdf_* helpers will use file:/// paths for assets when using 
 #### Gotchas
 
 If one image from your HTML cannot be found (relative or wrong path for ie), others images with right paths **may not** be displayed in the output PDF as well (it seems to be an issue with wkhtmltopdf).
+
+wkhtmltopdf may render at different resolutions on different platforms. For example, Linux prints at 75 dpi (native for WebKit) while on Windows it's at the desktop's DPI (which is normally 96 dpi). [Use `:zoom => 0.78125`](https://github.com/wkhtmltopdf/wkhtmltopdf/issues/2184) (75/96) to match Linux rendering to Windows.
 
 ### Inspiration
 
